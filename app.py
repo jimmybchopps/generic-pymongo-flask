@@ -5,6 +5,7 @@ from flask_cors import CORS, cross_origin
 import datetime
 import json
 from bson.json_util import dumps
+import sys
 
 app = Flask(__name__)
 CORS(app)
@@ -19,8 +20,14 @@ HTTP_BAD_REQUEST                    =   400
 
 # Put your MongoDB connection URL here. Use authSource only if you're authentication against
 # a different database than the one you shall be querying for data.
-app.config["MONGO_URI"] = "mongodb://username:password@host:port/database?authSource=admin"
+app.config["MONGO_URI"] = os.environ.get("ConnectionUri")
 mongo = PyMongo(app)
+
+# Allowing for default values in even of variables not being supplied
+port= os.environ.get('Port') or 8080
+debug= os.environ.get('Debug') or True
+
+#mongo = PyMongo(app)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -153,4 +160,4 @@ def unhandled_exception(error):
         return send({'error': "Unknown error"}, HTTP_SERVER_ERROR)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=4000, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=debug)
