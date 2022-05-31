@@ -56,10 +56,10 @@ def server_time():
     return send(data, HTTP_SUCCESS_GET_OR_UPDATE)
 
 
-@app.route('/<collection_name>', methods=['POST'])
+@app.route('/<collection_name>', methods=['PUT'])
 def post_item(collection_name):
     """
-        Post one item in collection.
+        Puts one item in collection.
     """
     collection = getattr(mongo.db, collection_name)
     formdata = request.json
@@ -93,6 +93,19 @@ def get_all_items(collection_name):
     collection = getattr(mongo.db, collection_name)
     output = []
     for q in collection.find():
+        output.append(q)
+    return send(output, HTTP_SUCCESS_GET_OR_UPDATE)
+
+
+@app.route('/<collection_name>', methods=['POST'])
+def get_all_items(collection_name):
+    """
+        Get all documents by filter.
+    """
+    collection = getattr(mongo.db, collection_name)
+    formdata = request.json
+    output = []
+    for q in collection.find(formdata):
         output.append(q)
     return send(output, HTTP_SUCCESS_GET_OR_UPDATE)
 
